@@ -1,32 +1,7 @@
-// import { Link } from "react-router-dom";
-
-// const Pembelajaran = () => {
-//   return (
-//     <div
-//       style={{
-//         height: "100vh",
-//       }}
-//     >
-//       <header
-//         style={{
-//           display: "flex",
-//           backgroundColor: "#E3F2FD",
-//           height: "15vh",
-//           padding: "20px",
-//         }}
-//       >
-//         <Link to="/">arrow kiri</Link>
-//         <h2 style={{ marginLeft: "30%" }}>Belajar Web developers</h2>
-//       </header>
-//     </div>
-//   );
-// };
-
-// export default Pembelajaran;
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const Pembelajaran = () => {
+const PembelajaranPage = () => {
   const [showModul, setShowModul] = useState(true);
   const [materiAktif, setMateriAktif] = useState(null);
 
@@ -78,7 +53,7 @@ const Pembelajaran = () => {
         <Link to="/" style={{ marginRight: "auto", fontSize: "24px" }}>
           ←
         </Link>
-        <h2 style={{ margin: "0 auto" }}>Belajar web developer</h2>
+        <h2 style={{ margin: "0 auto" }}>Belajar Web Developer</h2>
       </header>
 
       {/* Konten Utama */}
@@ -128,7 +103,7 @@ const Pembelajaran = () => {
             <span style={{ fontSize: "24px", marginRight: "10px" }}>
               {showModul ? "➤" : "◀"}
             </span>
-            {showModul && <strong>Daftar modul</strong>}
+            {showModul && <strong>Daftar Modul</strong>}
           </div>
 
           {/* List Modul */}
@@ -155,4 +130,4 @@ const Pembelajaran = () => {
   );
 };
 
-export default Pembelajaran;
+export default PembelajaranPage;

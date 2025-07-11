@@ -78,12 +78,13 @@ const HomePage = () => {
                 >
                   <img
                     src={kelas.image}
-                    alt="unplash.com"
-                    className="w-100 mb-5 rounded-top"
+                    alt={kelas.title}
+                    className="w-100 mb-3 rounded-top"
                   />
-                  <h5 className="mb-5 px-3">{kelas.title}</h5>
+                  <h5 className="px-3">{kelas.title}</h5>
+                  <p className="px-3">{kelas.description}</p>
                   <div className="ket d-flex justify-content-between align-items-center px-3 pb-3">
-                    {/* <p className="m-0 text-primary fw-bold">{kelas.price}</p> */}
+                    <p className="m-0 text-primary fw-bold">Rp {kelas.price}</p>
                     <button
                       className="btn btn-danger rounded-1"
                       onClick={() => Navigate("/PembelajaranPage")}

@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { Navbar, Container, Nav, Button } from "react-bootstrap";
 import { navLinks } from "../data/index";
 import { NavLink, Link, useNavigate } from "react-router-dom";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "../firebase";
 
 const NavbarComponents = () => {
   const [changeColor, setChangeColor] = useState(false);
@@ -24,17 +22,14 @@ const NavbarComponents = () => {
     };
   }, []);
 
-  const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      console.log("Login berhasil", result.user);
-      alert("Login berhasil!");
-      navigate("/dashboard");
-    } catch (error) {
-      console.error("Gagal login:", error);
-      alert("Gagal login: " + error.message);
-    }
+  // Ambil user dari localStorage
+  const user = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
   };
 
   return (
@@ -47,6 +42,7 @@ const NavbarComponents = () => {
           position: "fixed",
           width: "100%",
           zIndex: 999,
+          top: 0,
         }}
       >
         <Container>
@@ -74,14 +70,31 @@ const NavbarComponents = () => {
                 );
               })}
             </Nav>
-            {/* Tambahan menu masuk dan daftar */}
+
+            {/* Tombol Daftar/Login atau Profil & Logout */}
             <div className="text-center">
-              <NavLink to="/login">
-                <Button variant="outline-dark rounded-1 me-2">Daftar</Button>
-              </NavLink>
-              <Button variant="dark" onClick={handleGoogleLogin}>
-                Masuk
-              </Button>
+              {user ? (
+                <>
+                  <span className="me-3 fw-semibold">
+                    👤 {user.role.toUpperCase()}
+                  </span>
+                  <Button
+                    variant="outline-danger rounded-1"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <NavLink to="/registrasi">
+                    <Button variant="outline-dark rounded-1 me-2">
+                      Daftar
+                    </Button>
+                  </NavLink>
+                  <NavLink to="/login">Masuk</NavLink>
+                </>
+              )}
             </div>
           </Navbar.Collapse>
         </Container>
