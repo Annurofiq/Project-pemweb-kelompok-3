@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axiosInstance"; // GANTI ini
+import axios from "axios";
 import { Container, Row, Col } from "react-bootstrap";
 import FaqComponent from "../components/FaqComponent";
 import { useNavigate } from "react-router-dom";
@@ -15,8 +15,9 @@ const KelasPage = () => {
   });
 
   const navigate = useNavigate();
-  const userId = localStorage.getItem("user_id");
   const role = localStorage.getItem("role");
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userId = user?.id;
 
   useEffect(() => {
     fetchData();
@@ -24,7 +25,9 @@ const KelasPage = () => {
 
   const fetchData = () => {
     axios
-      .get("courses-api.php")
+      .get(
+        "http://localhost/projekUasPemweb/Project-pemweb-kelompok-3/backend/api/courses-api.php"
+      )
       .then((res) => setKelasList(res.data))
       .catch((err) => console.error("Gagal fetch data:", err));
   };
@@ -40,9 +43,13 @@ const KelasPage = () => {
     e.preventDefault();
 
     axios
-      .post("courses-api.php", JSON.stringify(formData), {
-        headers: { "Content-Type": "application/json" },
-      })
+      .post(
+        "http://localhost/projekUasPemweb/Project-pemweb-kelompok-3/backend/api/courses-api.php",
+        JSON.stringify(formData),
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      )
       .then(() => {
         alert("Kelas berhasil ditambahkan");
         setFormData({
@@ -65,9 +72,14 @@ const KelasPage = () => {
     }
 
     axios
-      .post("enrollments-api.php", JSON.stringify({ course_id }), {
-        headers: { "Content-Type": "application/json" },
-      })
+      .post(
+        "http://localhost/projekUasPemweb/Project-pemweb-kelompok-3/backend/api/enrollments-api.php",
+        JSON.stringify({ course_id }),
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      )
       .then((res) => {
         alert(res.data.message);
         navigate("/PembelajaranPage");
@@ -151,7 +163,7 @@ const KelasPage = () => {
           </Row>
         )}
 
-        <Row>
+        <Row style={{ marginTop: "100px" }}>
           <Col>
             <h1 className="text-center fw-bold">Semua Kelas</h1>
             <p className="text-center mb-5">Lihat semua kelas yang tersedia</p>
@@ -169,21 +181,9 @@ const KelasPage = () => {
             >
               <img
                 src={
-                  kelas.image ? (
-                    <img
-                      src={kelas.image}
-                      alt={kelas.title}
-                      className="w-100 mb-3 rounded-top"
-                      style={{ height: "200px", objectFit: "cover" }}
-                    />
-                  ) : (
-                    <div
-                      className="bg-secondary w-100 mb-3 rounded-top d-flex justify-content-center align-items-center"
-                      style={{ height: "200px", color: "#fff" }}
-                    >
-                      No Image
-                    </div>
-                  )
+                  kelas.image
+                    ? kelas.image
+                    : "https://via.placeholder.com/400x200?text=No+Image"
                 }
                 alt={kelas.title}
                 className="w-100 mb-3 rounded-top"
@@ -193,14 +193,12 @@ const KelasPage = () => {
               <p className="px-3">{kelas.description}</p>
               <div className="ket d-flex justify-content-between align-items-center px-3 pb-3">
                 <p className="m-0 text-primary fw-bold">Rp {kelas.price}</p>
-                {role === "user" && (
-                  <button
-                    className="btn btn-danger rounded-1"
-                    onClick={() => handleDaftar(kelas.id)}
-                  >
-                    Daftar Sekarang
-                  </button>
-                )}
+                <button
+                  className="btn btn-danger rounded-1"
+                  onClick={() => handleDaftar(kelas.id)}
+                >
+                  Daftar Sekarang
+                </button>
               </div>
             </Col>
           ))}
