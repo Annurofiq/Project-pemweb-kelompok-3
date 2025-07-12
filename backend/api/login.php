@@ -21,7 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'email' => $user['email'],
                 'role' => $user['role']
             ];
-            echo "<p style='color:green'>Login berhasil. Selamat datang, <strong>{$user['name']}</strong>!</p>";
+            // Redirect ke halaman setelah login
+            header("Location: profile.php");
+            exit;
         } else {
             echo "<p style='color:red'>Email atau password salah.</p>";
         }
@@ -47,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit">Login</button>
   </form>
   <br>
-  <a href="../index.php">Kembali</a> |
+  <a href="../index.php">🔙 Kembali</a> |
   <a href="register.php">Daftar Akun Baru</a>
 </body>
 </html>

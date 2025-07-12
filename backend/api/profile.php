@@ -3,7 +3,7 @@ session_start();
 require '../config/database.php';
 header("Content-Type: text/html; charset=UTF-8");
 
-// Cek login
+// Cek apakah user sudah login
 if (!isset($_SESSION['user'])) {
     header("Location: login.php");
     exit;
@@ -12,7 +12,7 @@ if (!isset($_SESSION['user'])) {
 $user_id = $_SESSION['user']['id'];
 $message = "";
 
-// Update user jika ada POST
+// Update profil jika form disubmit
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     $name = $conn->real_escape_string($_POST['name']);
     $email = $conn->real_escape_string($_POST['email']);
@@ -28,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
 
     if ($conn->query($sql)) {
         $message = "<p style='color:green;'>✅ Profil berhasil diperbarui</p>";
-        // Update session
         $_SESSION['user']['name'] = $name;
         $_SESSION['user']['email'] = $email;
         $_SESSION['user']['role'] = $role;
@@ -37,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     }
 }
 
-// Ambil ulang data user
+// Ambil ulang data user dari DB
 $result = $conn->query("SELECT * FROM users WHERE id=$user_id");
 $user = $result->fetch_assoc();
 ?>
@@ -60,8 +59,8 @@ $user = $result->fetch_assoc();
 
     <label>Role:</label><br>
     <select name="role">
-      <option value="guru" <?= $user['role'] === 'guru' ? 'selected' : '' ?>>Guru</option>
-      <option value="siswa" <?= $user['role'] === 'siswa' ? 'selected' : '' ?>>Siswa</option>
+      <option value="Admin" <?= $user['role'] === 'Admin' ? 'selected' : '' ?>>Admin</option>
+      <option value="User" <?= $user['role'] === 'User' ? 'selected' : '' ?>>User</option>
     </select><br><br>
 
     <label>Password Baru (kosongkan jika tidak ingin ganti):</label><br>
@@ -71,8 +70,8 @@ $user = $result->fetch_assoc();
   </form>
 
   <br>
-  <a href="logout-api.php">logout</a>|
-  <a href="hapus_user.php" onclick="return confirm('Yakin ingin hapus akun Anda dan semua data kursus?')">❌ Hapus Akun</a>
- |<a href="../index.php">Beranda</a>
+  <a href="logout-api.php">Logout</a> |
+  <a href="hapus_user.php" onclick="return confirm('Yakin ingin hapus akun Anda dan semua data kursus?')">❌ Hapus Akun</a> |
+  <a href="../index.php">🔙 Beranda</a>
 </body>
 </html>

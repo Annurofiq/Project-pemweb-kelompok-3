@@ -2,34 +2,41 @@
 require '../config/database.php';
 header("Content-Type: text/html; charset=UTF-8");
 
-// Jika form disubmit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name     = $_POST['name'] ?? '';
-    $email    = $_POST['email'] ?? '';
+    $name     = trim($_POST['name'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $role     = $_POST['role'] ?? '';
 
-    // Validasi data
     if (!$name || !$email || !$password || !$role) {
         echo "<p style='color:red'>Semua field harus diisi.</p>";
     } else {
         $passwordHashed = password_hash($password, PASSWORD_BCRYPT);
 
         // Cek email sudah terdaftar belum
-        $check = $conn->query("SELECT id FROM users WHERE email='$email'");
-        if ($check->num_rows > 0) {
+        $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows > 0) {
             echo "<p style='color:red'>Email sudah terdaftar!</p>";
         } else {
-            $sql = "INSERT INTO users (name, email, password, role) VALUES ('$name', '$email', '$passwordHashed', '$role')";
-            if ($conn->query($sql)) {
+            $stmt = $conn->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssss", $name, $email, $passwordHashed, $role);
+
+            if ($stmt->execute()) {
                 echo "<p style='color:green'>Registrasi berhasil!</p>";
             } else {
-                echo "<p style='color:red'>Terjadi kesalahan: " . $conn->error . "</p>";
+                echo "<p style='color:red'>Terjadi kesalahan: " . $stmt->error . "</p>";
             }
         }
+
+        $stmt->close();
     }
 }
 ?>
+
 
 <!-- HTML Form -->
 <!DOCTYPE html>
@@ -51,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <label>Role:</label><br>
     <select name="role">
-      <option value="guru">Guru</option>
-      <option value="siswa">Siswa</option>
+      <option value="Admin">admin</option>
+      <option value="User">user</option>
     </select><br><br>
 
     <button type="submit">Daftar</button>
