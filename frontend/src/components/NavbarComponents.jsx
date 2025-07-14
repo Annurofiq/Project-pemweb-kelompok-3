@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Navbar, Container, Nav, Button } from "react-bootstrap";
 import { navLinks } from "../data/index";
 import { NavLink, Link, useNavigate } from "react-router-dom";
+import axiosInstance from "../axiosInstance";
 
 const NavbarComponents = () => {
   const [changeColor, setChangeColor] = useState(false);
@@ -16,13 +17,25 @@ const NavbarComponents = () => {
   };
 
   useEffect(() => {
+    axiosInstance
+      .get("check-login.php")
+      .then((res) => {
+        console.log("Login sebagai:", res.data.user);
+      })
+      .catch((err) => {
+        if (err.response?.status === 401) {
+          console.log("Belum login");
+        } else {
+          console.error("Gagal akses check-login.php", err);
+        }
+      });
+
     window.addEventListener("scroll", changeBackgroundColor);
     return () => {
       window.removeEventListener("scroll", changeBackgroundColor);
     };
   }, []);
 
-  // Ambil user dari localStorage
   const user = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
@@ -71,7 +84,6 @@ const NavbarComponents = () => {
               })}
             </Nav>
 
-            {/* Tombol Daftar/Login atau Profil & Logout */}
             <div className="text-center">
               {user ? (
                 <>
