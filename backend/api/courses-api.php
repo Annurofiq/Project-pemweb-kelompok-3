@@ -75,40 +75,40 @@ case 'DELETE':
     }
     break;
 
-    case 'PUT':
-        parse_str(file_get_contents("php://input"), $input);
+case 'PUT':
+    $input = json_decode(file_get_contents("php://input"), true);
 
-        $id = intval($input['id'] ?? 0);
-        $title = $conn->real_escape_string($input['title'] ?? '');
-        $description = $conn->real_escape_string($input['description'] ?? '');
-        $price = intval($input['price'] ?? 0);
-        $image = $conn->real_escape_string($input['image'] ?? '');
-        $schedule = $conn->real_escape_string($input['schedule'] ?? '');
+    $id = intval($input['id'] ?? 0);
+    $title = $conn->real_escape_string($input['title'] ?? '');
+    $description = $conn->real_escape_string($input['description'] ?? '');
+    $price = intval($input['price'] ?? 0);
+    $image = $conn->real_escape_string($input['image'] ?? '');
+    $schedule = $conn->real_escape_string($input['schedule'] ?? '');
 
-        $created_by = $_SESSION['user']['id'] ?? null;
-        if (!$created_by) {
-            echo json_encode(["status" => "error", "message" => "User belum login"]);
-            exit;
-        }
+    $created_by = $_SESSION['user']['id'] ?? null;
+    if (!$created_by) {
+        echo json_encode(["status" => "error", "message" => "User belum login"]);
+        exit;
+    }
 
-        if ($id && $title && $description && $price && $schedule) {
-            $sql = "UPDATE courses SET 
-                        title='$title', 
-                        description='$description', 
-                        price=$price, 
-                        image='$image', 
-                        schedule='$schedule', 
-                        created_by=$created_by
-                    WHERE id=$id";
-            if ($conn->query($sql)) {
-                echo json_encode(["status" => "success", "message" => "Kelas berhasil diupdate"]);
-            } else {
-                echo json_encode(["status" => "error", "message" => $conn->error]);
-            }
+    if ($id && $title && $description && $price && $schedule) {
+        $sql = "UPDATE courses SET 
+                    title='$title', 
+                    description='$description', 
+                    price=$price, 
+                    image='$image', 
+                    schedule='$schedule', 
+                    created_by=$created_by
+                WHERE id=$id";
+        if ($conn->query($sql)) {
+            echo json_encode(["status" => "success", "message" => "Kelas berhasil diupdate"]);
         } else {
-            echo json_encode(["status" => "error", "message" => "Data tidak lengkap atau ID tidak valid"]);
+            echo json_encode(["status" => "error", "message" => $conn->error]);
         }
-        break;
+    } else {
+        echo json_encode(["status" => "error", "message" => "Data tidak lengkap atau ID tidak valid"]);
+    }
+    break;
 
     default:
         http_response_code(405);
